@@ -1,25 +1,35 @@
 # vim:ft=perl
+package Fastgraph;
+
 use strict;
 use warnings;
 
 use Heap::Priority;
 
-sub g_new { return { vertices => {}, edges => [] }; }
-sub g_vertex {
-	my ($g, $name) = @_;
-	if (!exists($g->{vertices}->{$name})) {
-		$g->{vertices}->{$name} = {
+sub new {
+	my ($class) = @_;
+	return bless({
+		vertices => {},
+		edges => [],
+	}, $class);
+}
+
+sub addvertex {
+	my ($self, $name) = @_;
+
+	if (!exists($self->{vertices}->{$name})) {
+		$self->{vertices}->{$name} = {
 			_name => $name,
 			_edges => []
 		};
 	}
-	return $g->{vertices}->{$name};
+	return $self->{vertices}->{$name};
 }
 
-sub g_edge {
-	my ($g, $from, $to, $weight) = @_;
-	my $v_from = g_vertex($g, $from);
-	my $v_to   = g_vertex($g, $to);
+sub addedge {
+	my ($self, $from, $to, $weight) = @_;
+	my $v_from = $self->addvertex($from);
+	my $v_to   = $self->addvertex($to);
 
 	my $edge = {
 		from   => $from,
@@ -27,17 +37,17 @@ sub g_edge {
 		weight => $weight
 	};
 
-	push(@{$g->{edges}}, $edge);
+	push(@{$self->{edges}}, $edge);
 	push(@{$v_from->{_edges}}, $edge);
 	push(@{$v_to->{_edges}}, $edge);
 }
 
-sub g_dijkstra {
-	my ($g, $from, $to) = @_;
+sub dijkstra {
+	my ($self, $from, $to) = @_;
 
-	return undef if (!exists($g->{vertices}->{$to}));
+	return undef if (!exists($self->{vertices}->{$to}));
 
-	my $vert = $g->{vertices};
+	my $vert = $self->{vertices};
 	my %dist;                       # distance from start node
 	# nodes that have never been touched (where dist == infinity,
 	# NOT nodes that just are not optimal yet.)
@@ -86,14 +96,27 @@ sub g_dijkstra {
 	return @path;
 }
 
-sub g_count_vertices {
-	my ($g) = @_;
-	return scalar(keys(%{$g->{vertices}}));
+sub countvertices {
+	my ($self) = @_;
+	return scalar(keys(%{$self->{vertices}}));
 }
 
-sub g_count_edges {
-	my ($g) = @_;
-	return scalar(@{$g->{edges}});
+sub countedges {
+	my ($self) = @_;
+	return scalar(@{$self->{edges}});
+}
+
+# Graph.pm compatiblity routines
+sub add_weighted_edge {
+	$_[0]->addedge($_[1], $_[2], $_[3]);
+}
+
+sub add_edge {
+	$_[0]->addedge($_[1], $_[2], 1);
+}
+
+sub SP_Dijkstra {
+	$_[0]->dijkstra($_[1], $_[2]);
 }
 
 1;
