@@ -69,7 +69,7 @@ sub dijkstra {
 
 		# update all neighbors
 		foreach my $edge (grep { $_->{from} eq $current } @{$vert->{$current}->{_edges}}) {
-			if (($dist{$edge->{to}} eq $infinity) ||
+			if (($dist{$edge->{to}} == $infinity) ||
 			($dist{$edge->{to}} > ($dist{$current} + $edge->{weight}) )) {
 				$suboptimal->update(
 					$edge->{to},
@@ -107,17 +107,13 @@ sub countedges {
 }
 
 # Graph.pm compatiblity routines
-sub add_weighted_edge {
-	$_[0]->addedge($_[1], $_[2], $_[3]);
-}
+*add_weighted_edge = \&addedge;
 
 sub add_edge {
 	$_[0]->addedge($_[1], $_[2], 1);
 }
 
-sub SP_Dijkstra {
-	$_[0]->dijkstra($_[1], $_[2]);
-}
+*SP_Dijkstra = \&dijkstra;
 
 1;
 

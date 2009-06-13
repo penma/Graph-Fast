@@ -59,8 +59,9 @@ sub insert {
 
 	# And finally we have a nontrivial queue.  Insert the item using a
 	# binary seek.
+	my $midpoint;
 	while (1) {
-		my $midpoint = ($upper + $lower) >> 1;
+		$midpoint = ($upper + $lower) >> 1;
 
 		# Upper and lower bounds crossed.  Insert at the lower point.
 		if ($upper < $lower) {
@@ -88,8 +89,9 @@ sub find_payload_pos {
 	# Find the item with binary search.
 	my $lower = 0;
 	my $upper = @{$self->{queue}} - 1;
+	my $midpoint;
 	while (1) {
-		my $midpoint = ($upper + $lower) >> 1;
+		$midpoint = ($upper + $lower) >> 1;
 
 		# bounds crossed. the lower point is aimed at an element with
 		# a higher priority than the target
