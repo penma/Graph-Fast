@@ -4,6 +4,8 @@ package Fastgraph;
 use strict;
 use warnings;
 
+use constant { EDGE_FROM => 0, EDGE_TO => 1, EDGE_WEIGHT => 2 };
+
 use PriorityList;
 
 sub new {
@@ -32,11 +34,7 @@ sub addedge {
 	my $v_from = $v->{$_[1]} // $_[0]->addvertex($_[1]);
 	my $v_to   = $v->{$_[2]} // $_[0]->addvertex($_[2]);
 
-	my $edge = {
-		from   => $_[1],
-		to     => $_[2],
-		weight => $_[3]
-	};
+	my $edge = [ $_[1], $_[2], $_[3] ];
 
 	push(@{$_[0]->{edges}}, $edge);
 	push(@{$v_from->{_edges}}, $edge);
@@ -69,12 +67,12 @@ sub dijkstra {
 		last if (!defined($current));
 
 		# update all neighbors
-		foreach my $edge (grep { $_->{from} eq $current } @{$vert->{$current}->{_edges}}) {
-			if (($dist{$edge->{to}} == $infinity) ||
-			($dist{$edge->{to}} > ($dist{$current} + $edge->{weight}) )) {
+		foreach my $edge (grep { $_->[EDGE_FROM] eq $current } @{$vert->{$current}->{_edges}}) {
+			if (($dist{$edge->[EDGE_TO]} == $infinity) ||
+			($dist{$edge->[EDGE_TO]} > ($dist{$current} + $edge->[EDGE_WEIGHT]) )) {
 				$suboptimal->update(
-					$edge->{to},
-					$dist{$edge->{to}} = $dist{$current} + $edge->{weight}
+					$edge->[EDGE_TO],
+					$dist{$edge->[EDGE_TO]} = $dist{$current} + $edge->[EDGE_WEIGHT]
 				);
 			}
 		}
@@ -85,9 +83,9 @@ sub dijkstra {
 	my $current = $to;
 	while ($current ne $from) {
 		unshift(@path, $current);
-		foreach my $edge (grep { $_->{to} eq $current } @{$vert->{$current}->{_edges}}) {
-			if ($dist{$current} == $dist{$edge->{from}} + $edge->{weight}) {
-				$current = $edge->{from};
+		foreach my $edge (grep { $_->[EDGE_TO] eq $current } @{$vert->{$current}->{_edges}}) {
+			if ($dist{$current} == $dist{$edge->[EDGE_FROM]} + $edge->[EDGE_WEIGHT]) {
+				$current = $edge->[EDGE_FROM];
 				last;
 			}
 		}
