@@ -4,7 +4,7 @@ package Fastgraph;
 use strict;
 use warnings;
 
-use Heap::Priority;
+use PriorityList;
 
 sub new {
 	my ($class) = @_;
@@ -53,9 +53,8 @@ sub dijkstra {
 	# NOT nodes that just are not optimal yet.)
 	my @unvisited = grep { $_ ne $from } keys(%{$vert});
 	my $infinity = -1;
-	my $suboptimal = new Heap::Priority;
-	$suboptimal->lowest_first();
-	$suboptimal->add($from, 0);
+	my $suboptimal = new PriorityList;
+	$suboptimal->insert($from, 0);
 
 	$dist{$_} = $infinity foreach (@unvisited);
 	$dist{$from} = 0;
@@ -72,9 +71,10 @@ sub dijkstra {
 		foreach my $edge (grep { $_->{from} eq $current } @{$vert->{$current}->{_edges}}) {
 			if (($dist{$edge->{to}} eq $infinity) ||
 			($dist{$edge->{to}} > ($dist{$current} + $edge->{weight}) )) {
-				$dist{$edge->{to}} = $dist{$current} + $edge->{weight};
-				$suboptimal->delete_item($edge->{to});
-				$suboptimal->add($edge->{to}, $dist{$edge->{to}});
+				$suboptimal->update(
+					$edge->{to},
+					$dist{$edge->{to}} = $dist{$current} + $edge->{weight}
+				);
 			}
 		}
 	}
