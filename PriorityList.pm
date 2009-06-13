@@ -59,15 +59,11 @@ sub insert {
 
 	# And finally we have a nontrivial queue.  Insert the item using a
 	# binary seek.
+	# Do this until the upper and lower bounds crossed... in which case we
+	# will insert at the lower point
 	my $midpoint;
-	while (1) {
+	while ($upper >= $lower) {
 		$midpoint = ($upper + $lower) >> 1;
-
-		# Upper and lower bounds crossed.  Insert at the lower point.
-		if ($upper < $lower) {
-			splice(@{$self->{queue}}, $lower, 0, $payload);
-			return;
-		}
 
 		# We're looking for a priority lower than the one at the midpoint.
 		# Set the new upper point to just before the midpoint.
@@ -80,6 +76,8 @@ sub insert {
 		# midpoint.  The new lower bound is just after the midpoint.
 		$lower = $midpoint + 1;
 	}
+
+	splice(@{$self->{queue}}, $lower, 0, $payload);
 }
 
 sub find_payload_pos {
@@ -87,15 +85,13 @@ sub find_payload_pos {
 	my $priority = $self->{prios}->{$payload};
 
 	# Find the item with binary search.
+	# Do this until the bounds are crossed, in which case the lower point
+	# is aimed at an element with a higher priority than the target
 	my $lower = 0;
 	my $upper = @{$self->{queue}} - 1;
 	my $midpoint;
-	while (1) {
+	while ($upper >= $lower) {
 		$midpoint = ($upper + $lower) >> 1;
-
-		# bounds crossed. the lower point is aimed at an element with
-		# a higher priority than the target
-		last if ($upper < $lower);
 
 		# We're looking for a priority lower than the one at the midpoint.
 		# Set the new upper point to just before the midpoint.

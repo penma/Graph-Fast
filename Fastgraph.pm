@@ -27,17 +27,18 @@ sub addvertex {
 }
 
 sub addedge {
-	my ($self, $from, $to, $weight) = @_;
-	my $v_from = $self->addvertex($from);
-	my $v_to   = $self->addvertex($to);
+	# my ($self, $from, $to, $weight) = @_;
+	my $v = $_[0]->{vertices};
+	my $v_from = $v->{$_[1]} // $_[0]->addvertex($_[1]);
+	my $v_to   = $v->{$_[2]} // $_[0]->addvertex($_[2]);
 
 	my $edge = {
-		from   => $from,
-		to     => $to,
-		weight => $weight
+		from   => $_[1],
+		to     => $_[2],
+		weight => $_[3]
 	};
 
-	push(@{$self->{edges}}, $edge);
+	push(@{$_[0]->{edges}}, $edge);
 	push(@{$v_from->{_edges}}, $edge);
 	push(@{$v_to->{_edges}}, $edge);
 }
