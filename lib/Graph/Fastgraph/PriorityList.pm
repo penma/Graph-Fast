@@ -152,35 +152,67 @@ __END__
 
 =head1 NAME
 
-POE::Queue::Array - a high-performance array-based priority queue
+Graph::Fastgraph::PriorityList - high performance priority list (pure perl)
 
 =head1 SYNOPSIS
 
-See L<POE::Queue>.
+ my $prio = new Graph::Fastgraph::PriorityList;
+ $prio->insert("foo", 2);
+ $prio->insert("bar", 1);
+ $prio->insert("baz", 3);
+ my $next = $prio->pop(); # "bar"
+ # I decided that "foo" isn't as important anymore
+ $prio->update("foo", 99);
 
 =head1 DESCRIPTION
 
-This class is an implementation of the abstract POE::Queue interface.
-As such, its documentation may be found in L<POE::Queue>.
+This module implements a high-performance priority list. It's written in pure
+Perl. This module is a L<POE::Queue::Array> ripoff, but its interface has been
+simplified and the code has been optimized (benchmarks follow).
 
-POE::Queue::Array implements a priority queue using Perl arrays,
-splice, and copious application of cleverness.
+Currently it's only used by L<Graph::Fastgraph>, but it might be released as a
+standalone library.
 
-Despite its name, POE::Queue::Array may be used as a stand-alone
-priority queue without the rest of POE.
+Available functions are:
+
+=head2 new()
+
+Obvious.
+
+=head2 insert(I<$payload>, I<$priority>)
+
+Adds the specified payload (anything fitting into a scalar) to the priority
+queue, using the specified priority. Smaller means more important.
+
+=head2 pop()
+
+Removes the most important item (numerically lowest priority) from the queue
+and returns it. If no element is there, returns I<undef>.
+
+=head2 delete(I<$payload>)
+
+Deletes an item known by the specified payload from the queue.
+
+=head2 update(I<$payload>, I<$new_priority>)
+
+Finds the item known by the specified payload, and assigns it the new priority.
+It's optimized to perform better than a delete followed by insert.
 
 =head1 SEE ALSO
 
-L<POE>, L<POE::Queue>
+L<POE::Queue::Array>
 
 =head1 BUGS
 
-None known.
+Maybe.
 
 =head1 AUTHORS & COPYRIGHTS
 
-Please see L<POE> for more information about authors, contributors,
-and POE's licensing.
+Being a L<POE::Queue::Array> ripoff, this module is
+Copyright 1998-2007 Rocco Caputo. All rights reserved.
+POE::Queue::Array is free software; you may redistribute it and/or modify it
+under the same terms as Perl itself.
+
+Modifications to the module Made 2009 by Lars Stoltenow, license as above.
 
 =cut
-# TODO - Edit.
