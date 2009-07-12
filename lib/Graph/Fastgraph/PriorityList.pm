@@ -1,4 +1,4 @@
-package PriorityList; # TODO: update doc, upload to cpan and change name. and make interface compatible with other mods.
+package Graph::Fastgraph::PriorityList; # TODO: update doc, upload to cpan and change name. and make interface compatible with other mods.
 
 use strict;
 use warnings;

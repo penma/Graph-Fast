@@ -1,5 +1,5 @@
 # vim:ft=perl
-package Fastgraph;
+package Graph::Fastgraph;
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ use constant {
 	VERT_NAME => 0, VERT_EDGES => 1,
 };
 
-use PriorityList;
+use Graph::Fastgraph::PriorityList; # might be moved to a dist of its own
 
 sub new {
 	my ($class) = @_;
@@ -52,7 +52,7 @@ sub dijkstra {
 	# NOT nodes that just are not optimal yet.)
 	my @unvisited = grep { $_ ne $from } keys(%{$vert});
 	my $infinity = -1;
-	my $suboptimal = new PriorityList;
+	my $suboptimal = new Graph::Fastgraph::PriorityList;
 	$suboptimal->insert($from, 0);
 
 	$dist{$_} = $infinity foreach (@unvisited);
