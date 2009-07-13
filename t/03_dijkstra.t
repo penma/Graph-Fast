@@ -31,3 +31,6 @@ is_deeply([$g->dijkstra("A", "B")], ["A", "E", "B"], "new shortest path taken");
 # to directionality?
 ok(!defined($g->dijkstra("B", "A")), "returns undef when there is no path");
 
+# and between nodes that don't exist?
+ok(!defined($g->dijkstra("B", "X")), "returns undef for unknown nodes pt. 1");
+ok(!defined($g->dijkstra("X", "B")), "returns undef for unknown nodes pt. 2");
