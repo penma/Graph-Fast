@@ -104,15 +104,6 @@ sub countedges {
 	return scalar(@{$self->{edges}});
 }
 
-# Graph.pm compatiblity routines
-*add_weighted_edge = \&addedge;
-
-sub add_edge {
-	$_[0]->addedge($_[1], $_[2], 1);
-}
-
-*SP_Dijkstra = \&dijkstra;
-
 1;
 
 __END__

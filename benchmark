@@ -4,17 +4,17 @@ use warnings;
 
 use lib 'lib';
 use Graph::Directed;
-use Graph::Fastgraph;
+use Graph::Fastgraph::GraphPM;
 use Time::HiRes qw(time);
 
 sub countvertices {
 	my $g = shift;
-	return $g->countvertices() if (ref($g) eq "Graph::Fastgraph");
+	return $g->countvertices() if (ref($g) eq "Graph::Fastgraph::GraphPM");
 	return scalar($g->vertices);
 }
 sub countedges {
 	my $g = shift;
-	return $g->countedges() if (ref($g) eq "Graph::Fastgraph");
+	return $g->countedges() if (ref($g) eq "Graph::Fastgraph::GraphPM");
 	return scalar($g->edges);
 }
 
@@ -85,7 +85,7 @@ foreach (
 [10000, 20000, 5, 10000000],
 ) {
 	test_module("Graph::Directed", @{$_});
-	test_module("Graph::Fastgraph", @{$_});
+	test_module("Graph::Fastgraph::GraphPM", @{$_});
 	print "\n\n";
 }
 
