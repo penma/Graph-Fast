@@ -81,14 +81,17 @@ sub dijkstra {
 	# trace the path from the destination to the start
 	my @path = ();
 	my $current = $to;
-	while ($current ne $from) {
+	NODE: while ($current ne $from) {
 		unshift(@path, $current);
 		foreach my $edge (grep { $_->[EDGE_TO] eq $current } @{$vert->{$current}->[VERT_EDGES]}) {
 			if ($dist{$current} == $dist{$edge->[EDGE_FROM]} + $edge->[EDGE_WEIGHT]) {
 				$current = $edge->[EDGE_FROM];
-				last;
+				next NODE;
 			}
 		}
+		# getting here means we found no predecessor - there is none.
+		# so there's no path.
+		return undef;
 	}
 	unshift(@path, $from);
 
