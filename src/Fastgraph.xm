@@ -1,5 +1,5 @@
 # vim:ft=perl
-# This file is (or was) preprocessed using GenerateFastgraph.PL.
+# This file has been preprocessed using GenerateFastgraph.PL.
 # The input files can be found in the src/ directory of the distribution.
 # The master file is called src/Fastgraph.xm
 package Graph::Fastgraph;

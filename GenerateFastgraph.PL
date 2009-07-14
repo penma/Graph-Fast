@@ -9,7 +9,7 @@ while (<$master>) {
 		my $nextline = $. + 1;
 		opendir(my $dir, "src");
 		foreach (grep { /\.xf$/ } readdir($dir)) {
-			print "# line 1 \"src/$_\"\n";
+			print "# line 1 \"src/$_ (Graph::Fastgraph)\"\n";
 			open(my $inc, "<", "src/$_");
 			print while (<$inc>);
 			close($inc);

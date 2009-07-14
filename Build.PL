@@ -3,6 +3,9 @@ use strict;
 use warnings;
 use Module::Build;
 
+# to get a file with $VERSION
+system("./GenerateFastgraph.PL");
+
 my $build = Module::Build->new(
 	module_name => 'Graph::Fastgraph',
 	dist_author => 'Lars Stoltenow <penma.cpan@penma.de>',
