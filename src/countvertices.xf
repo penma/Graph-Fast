@@ -1,0 +1,5 @@
+# vim:ft=perl
+sub countvertices {
+	my ($self) = @_;
+	return scalar(keys(%{$self->{vertices}}));
+}

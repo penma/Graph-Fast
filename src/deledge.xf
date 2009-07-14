@@ -1,0 +1,44 @@
+# vim:ft=perl
+sub deledge {
+	# my ($self, $from, $to) = @_;
+	my $v = $_[0]->{vertices};
+	my $v_from = $v->{$_[1]};
+	my $v_to   = $v->{$_[2]};
+
+	# find the edge. assume it only exists once -> only delete the first.
+	# while we're at it, delete the edge from the source vertex...
+	my $e;
+	my $c = 0;
+	foreach (@{$v_from->[VERT_EDGES]}) {
+		if ($_->[EDGE_FROM] eq $_[1] and $_->[EDGE_TO] eq $_[2]) {
+			$e = $_;
+			splice(@{$v_from->[VERT_EDGES]}, $c, 1);
+			last;
+		}
+		$c++;
+	}
+	return undef if (!defined($e));
+
+	# now search it in the destination vertex' list, delete it there
+	# also only delete the first matching one here (though now there
+	# shouldn't be any duplicates at all because now we're matching the
+	# actual edge, not just its endpoints like above.
+	$c = 0;
+	foreach (@{$v_to->[VERT_EDGES]}) {
+		if ($_ == $e) {
+			splice(@{$v_to->[VERT_EDGES]}, $c, 1);
+			last;
+		}
+		$c++;
+	}
+
+	# and remove it from the graph's vertex list
+	$c = 0;
+	foreach (@{$_[0]->{edges}}) {
+		if ($_ == $e) {
+			splice(@{$_[0]->{edges}}, $c, 1);
+			last;
+		}
+		$c++;
+	}
+}

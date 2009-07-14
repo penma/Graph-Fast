@@ -1,0 +1,9 @@
+# vim:ft=perl
+sub addvertex {
+	my ($self, $name) = @_;
+
+	if (!exists($self->{vertices}->{$name})) {
+		$self->{vertices}->{$name} = [ $name, [] ];
+	}
+	return $self->{vertices}->{$name};
+}

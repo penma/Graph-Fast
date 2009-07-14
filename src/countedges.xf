@@ -1,0 +1,5 @@
+# vim:ft=perl
+sub countedges {
+	my ($self) = @_;
+	return scalar(@{$self->{edges}});
+}

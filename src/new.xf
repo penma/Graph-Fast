@@ -1,0 +1,8 @@
+# vim:ft=perl
+sub new {
+	my ($class) = @_;
+	return bless({
+		vertices => {},
+		edges => [],
+	}, $class);
+}

@@ -1,0 +1,35 @@
+=head1 NAME
+
+Graph::Fastgraph - 
+
+=head1 SYNOPSIS
+
+ # todo
+
+=head1 DESCRIPTION
+
+This module does something weird. It's written in pure
+Perl.
+
+Available functions are:
+
+=head2 B<new>()
+
+Obvious.
+
+=head2 B<unchecked_insert>(I<$payload>, I<$priority>)
+
+=head2 B<unchecked_update>(I<$payload>, I<$new_priority>)
+
+=head1 BUGS
+
+Maybe.
+
+=head1 SEE ALSO
+
+=head1 AUTHORS & COPYRIGHTS
+
+Made 2009 by Lars Stoltenow. No rights reserved. Do what the fuck you want.
+(Credit is appreciated, though)
+
+=cut

@@ -1,0 +1,57 @@
+# vim:ft=perl
+sub dijkstra {
+	my ($self, $from, $to) = @_;
+
+	return undef if (!exists($self->{vertices}->{$to}));
+
+	my $vert = $self->{vertices};
+	my %dist;                       # distance from start node
+	# nodes that have never been touched (where dist == infinity,
+	# NOT nodes that just are not optimal yet.)
+	my @unvisited = grep { $_ ne $from } keys(%{$vert});
+	my $infinity = -1;
+	my $suboptimal = new List::PriorityQueue;
+	$suboptimal->insert($from, 0);
+
+	$dist{$_} = $infinity foreach (@unvisited);
+	$dist{$from} = 0;
+
+	while (1) {
+		# find the smallest unvisited node
+		my $current = $suboptimal->pop();
+		if (!defined($current)) {
+			$current = pop(@unvisited);
+		}
+		last if (!defined($current));
+
+		# update all neighbors
+		foreach my $edge (grep { $_->[EDGE_FROM] eq $current } @{$vert->{$current}->[VERT_EDGES]}) {
+			if (($dist{$edge->[EDGE_TO]} == $infinity) ||
+			($dist{$edge->[EDGE_TO]} > ($dist{$current} + $edge->[EDGE_WEIGHT]) )) {
+				$suboptimal->update(
+					$edge->[EDGE_TO],
+					$dist{$edge->[EDGE_TO]} = $dist{$current} + $edge->[EDGE_WEIGHT]
+				);
+			}
+		}
+	}
+
+	# trace the path from the destination to the start
+	my @path = ();
+	my $current = $to;
+	NODE: while ($current ne $from) {
+		unshift(@path, $current);
+		foreach my $edge (grep { $_->[EDGE_TO] eq $current } @{$vert->{$current}->[VERT_EDGES]}) {
+			if ($dist{$current} == $dist{$edge->[EDGE_FROM]} + $edge->[EDGE_WEIGHT]) {
+				$current = $edge->[EDGE_FROM];
+				next NODE;
+			}
+		}
+		# getting here means we found no predecessor - there is none.
+		# so there's no path.
+		return undef;
+	}
+	unshift(@path, $from);
+
+	return @path;
+}
