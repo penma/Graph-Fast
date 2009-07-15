@@ -9,7 +9,7 @@ while (<$master>) {
 		my $nextline = $. + 1;
 		opendir(my $dir, "src");
 		foreach (grep { /\.xf$/ } readdir($dir)) {
-			if ($ENV{FASTGRAPH_DEBUG} eq "1") {
+			if (($ENV{FASTGRAPH_DEBUG} || 0) eq "1") {
 				print "# line 1 \"src/$_\"\n";
 			} else {
 				print "# line 1 \"src/$_ (Graph::Fastgraph)\"\n";
