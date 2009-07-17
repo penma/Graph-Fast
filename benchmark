@@ -5,6 +5,7 @@ use warnings;
 use lib 'lib';
 use Graph::Directed;
 use Graph::Fastgraph::GraphPM;
+use BoostGraphWrapper;
 use Time::HiRes qw(time);
 
 sub countvertices {
@@ -86,6 +87,7 @@ foreach (
 ) {
 	test_module("Graph::Directed", @{$_});
 	test_module("Graph::Fastgraph::GraphPM", @{$_});
+	test_module("BoostGraphWrapper", @{$_});
 	print "\n\n";
 }
 
