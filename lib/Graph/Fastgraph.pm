@@ -1,4 +1,4 @@
-package FastaGraph;
+package Graph::Fastgraph;
 
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ use constant {
 	VERT_NAME => 0, VERT_EDGES_OUT => 1, VERT_EDGES_IN => 2,
 };
 
-use HashPQ;
+use Hash::PriorityQueue;
 
 sub new {
 	my ($class) = @_;
