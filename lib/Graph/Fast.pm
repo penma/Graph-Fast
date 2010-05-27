@@ -138,40 +138,33 @@ sub recursive_dijkstra {
 }
 
 sub addedge {
-	# my ($self, $from, $to, $weight, $userdata) = @_;
-	my $g = shift;
-	deledge($g, @_[0,1]);
-	my $v = $g->{vertices};
-	my $v_from = $v->{$_[0]} // $g->addvertex($_[0]);
-	my $v_to   = $v->{$_[1]} // $g->addvertex($_[1]);
+	my ($self, $from, $to, $weight, $userdata) = @_;
+	$self->deledge($from => $to);
 
-	my $edge = { from => $_[0], to => $_[1], weight => $_[2] };
+	my $edge = { from => $from, to => $to, weight => $weight };
 
-	push(@{$g->{edges}}, $edge);
-	$v_from->{edges_out}->{$_[1]} = $edge;
-	$v_to->{edges_in}->{$_[0]}  = $edge;
+	push(@{$self->{edges}}, $edge);
+	($self->{vertices}->{$from} // $self->addvertex($from))->{edges_out}->{$to}   = $edge;
+	($self->{vertices}->{$to  } // $self->addvertex($to  ))->{edges_in }->{$from} = $edge;
 }
 
 sub deledge {
-	# my ($self, $from, $to) = @_;
-	my $v = $_[0]->{vertices};
-	my $v_from = $v->{$_[1]};
-	my $v_to   = $v->{$_[2]};
+	my ($self, $from, $to) = @_;
 
 	# find the edge. assume it only exists once -> only delete the first.
 	# while we're at it, delete the edge from the source vertex...
-	my $e = $v_from->{edges_out}->{$_[2]};
+	my $e = $self->{vertices}->{$from}->{edges_out}->{$to};
 	return undef if (!defined($e));
-	delete($v_from->{edges_out}->{$_[2]});
+	delete($self->{vertices}->{$from}->{edges_out}->{$to});
 
 	# now search it in the destination vertex' list, delete it there
 	# also only delete the first matching one here (though now there
 	# shouldn't be any duplicates at all because now we're matching the
 	# actual edge, not just its endpoints like above.
-	delete($v_to->{edges_in}->{$_[1]});
+	delete($self->{vertices}->{$to}->{edges_in}->{$from});
 
 	# and remove it from the graph's vertex list
-	@{$_[0]->{edges}} = grep { $_ != $e } @{$_[0]->{edges}}
+	@{$self->{edges}} = grep { $_ != $e } @{$self->{edges}}
 }
 
 1;
