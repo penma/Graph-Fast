@@ -4,9 +4,9 @@ use warnings;
 
 use Test::More tests => 7;
 
-use Graph::Fastgraph;
+use Graph::Fast;
 
-my $g = new Graph::Fastgraph;
+my $g = Graph::Fast->new();
 
 # if there's one possible path then that one should obviously be returned.
 $g->addedge("A", "B", 5);

@@ -1,4 +1,4 @@
-package Graph::Fastgraph;
+package Graph::Fast;
 
 use strict;
 use warnings;

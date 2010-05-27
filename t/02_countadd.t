@@ -4,9 +4,9 @@ use warnings;
 
 use Test::More tests => 6;
 
-use Graph::Fastgraph;
+use Graph::Fast;
 
-my $g = new Graph::Fastgraph;
+my $g = Graph::Fast->new();
 
 is($g->countedges()   , 0, "No edges");
 is($g->countvertices(), 0, "No vertices");

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Graph::Fastgraph - foo
+Graph::Fast - foo
 
 =head1 SYNOPSIS
 
