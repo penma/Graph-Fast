@@ -8,16 +8,16 @@ use Graph::Fast;
 
 my $g = Graph::Fast->new();
 
-is($g->countedges()   , 0, "No edges");
-is($g->countvertices(), 0, "No vertices");
+is($g->count_edges()   , 0, "No edges");
+is($g->count_vertices(), 0, "No vertices");
 
 # should create missing vertices
-$g->addedge("A", "B", 5);
-is($g->countedges(),    1, "One edge in graph");
-is($g->countvertices(), 2, "Two vertices in graph");
+$g->add_edge("A", "B", 5);
+is($g->count_edges(),    1, "One edge in graph");
+is($g->count_vertices(), 2, "Two vertices in graph");
 
 # shouldn't duplicate
-$g->addedge("A", "C", 3);
-is($g->countedges(),    2, "Two edges in graph");
-is($g->countvertices(), 3, "Three vertices in graph");
+$g->add_edge("A", "C", 3);
+is($g->count_edges(),    2, "Two edges in graph");
+is($g->count_vertices(), 3, "Three vertices in graph");
 

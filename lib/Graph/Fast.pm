@@ -22,17 +22,17 @@ sub new {
 	}, $class);
 }
 
-sub countedges {
+sub count_edges {
 	my ($self) = @_;
 	return scalar(@{$self->{edges}});
 }
 
-sub countvertices {
+sub count_vertices {
 	my ($self) = @_;
 	return scalar(keys(%{$self->{vertices}}));
 }
 
-sub addvertex {
+sub add_vertex {
 	my ($self, $name) = @_;
 
 	if (!exists($self->{vertices}->{$name})) {
@@ -124,7 +124,7 @@ sub recursive_dijkstra {
 			# from copies of the graph, remove one edge from the result path,
 			# and continue finding paths on that tree.
 			my $g2 = dclone($self);
-			$g2->deledge($d[0]->[$_]->{from}, $d[0]->[$_]->{to});
+			$g2->del_edge($d[0]->[$_]->{from}, $d[0]->[$_]->{to});
 			my @new = $g2->recursive_dijkstra($from, $to, $level - 1, $d[0]->[$_]->{to});
 
 			# add all new paths, unless they are already present in the result set
@@ -137,18 +137,18 @@ sub recursive_dijkstra {
 	@d;
 }
 
-sub addedge {
-	my ($self, $from, $to, $weight, $userdata) = @_;
-	$self->deledge($from => $to);
+sub add_edge {
+	my ($self, $from, $to, $weight, $user_data) = @_;
+	$self->del_edge($from => $to);
 
-	my $edge = { from => $from, to => $to, weight => $weight };
+	my $edge = { from => $from, to => $to, weight => $weight, (defined($user_data) ? (user_data => $user_data) : ()) };
 
 	push(@{$self->{edges}}, $edge);
-	($self->{vertices}->{$from} // $self->addvertex($from))->{edges_out}->{$to}   = $edge;
-	($self->{vertices}->{$to  } // $self->addvertex($to  ))->{edges_in }->{$from} = $edge;
+	($self->{vertices}->{$from} // $self->add_vertex($from))->{edges_out}->{$to}   = $edge;
+	($self->{vertices}->{$to  } // $self->add_vertex($to  ))->{edges_in }->{$from} = $edge;
 }
 
-sub deledge {
+sub del_edge {
 	my ($self, $from, $to) = @_;
 
 	# find the edge. assume it only exists once -> only delete the first.
@@ -202,26 +202,26 @@ Constructs a new Graph::Fast object.
 The constructor takes optional parameters as a hash. Currently there are
 no options.
 
-=head2 B<countedges>()
+=head2 B<count_edges>()
 
 Returns the number of edges in the graph.
 
-=head2 B<countvertices>()
+=head2 B<count_vertices>()
 
 Returns the number of vertices in the graph.
 
-=head2 B<addvertex>(I<$name>)
+=head2 B<add_vertex>(I<$name>)
 
 Adds a vertex with the specified name to the graph. Names must be unique.
 It is safe to call this with a name that already exists in the graph.
 
-=head2 B<addedge>(I<$from> => I<$to>, I<$weight>, I<$userdata>)
+=head2 B<add_edge>(I<$from> => I<$to>, I<$weight>, I<$user_data>)
 
 Adds a directed edge to the graph, pointing from vertex named I<$from> to
 I<$to>. The edge has a weight of I<$weight>. Application-specific data
 can be added to the edge.
 
-=head2 B<deledge>(I<$from> => I<$to>)
+=head2 B<del_edge>(I<$from> => I<$to>)
 
 Removes an edge that points from named vertex I<$from> to I<$to> from the
 graph.
@@ -233,8 +233,9 @@ It is safe to call this for edges that do not exist.
 Invokes Dijkstra's algorithm on the graph to find the shortest path from
 source vertex I<$from> to destination vertex I<$to>.
 
-If a path is found, it is returned as a list. If no path is found, an
-empty list is returned.
+If a path is found, it is returned as a list of edges. The edges are
+hashrefs with I<from>, I<to>, I<weight> and possibly I<user_data> keys.
+If no path is found, an empty list is returned.
 
 =head1 LIMITATIONS
 
@@ -246,13 +247,6 @@ It is unclear how to deal with multiedges (two different edges that connect
 the same pair of vertices). The behaviour will likely change in the future.
 Currently edges can and will exist only once.
 
-It is unclear if the internal representation should be partially exposed
-as a well-defined interface or if vertices and edges should be treated as
-opaque and only accessed using functions instead.
-
-As a result of that, the return values of several functions are not
-well-defined.
-
 =head1 BUGS
 
 Maybe.
@@ -261,7 +255,7 @@ Maybe.
 
 L<Graph> - slower, but a lot more features
 
-L<Boost::Graph> - written in C++, might be even faster
+L<Boost::Graph> - faster, written in C++
 
 =head1 AUTHORS & COPYRIGHTS
 
