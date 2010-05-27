@@ -16,10 +16,12 @@ use constant {
 use Hash::PriorityQueue;
 
 sub new {
-	my ($class) = @_;
+	my ($class, %args) = @_;
+	my $queue_maker = exists($args{queue_maker}) ? $args{queue_maker} : sub { Hash::PriorityQueue->new() };
 	return bless({
 		vertices => {},
 		edges => [],
+		_queue_maker => $queue_maker,
 	}, $class);
 }
 
@@ -46,7 +48,7 @@ sub dijkstra_worker {
 	my ($self, $from, $to) = @_;
 
 	my $vert = $self->{vertices};
-	my $suboptimal = new HashPQ;
+	my $suboptimal = $self->{_queue_maker}->();
 	$suboptimal->insert($_, $self->{d_suboptimal}->{$_}) foreach (keys(%{$self->{d_suboptimal}}));
 	$self->{d_dist}->{$_} = -1 foreach (@{$self->{d_unvisited}});
 	$self->{d_dist}->{$from} = 0;
