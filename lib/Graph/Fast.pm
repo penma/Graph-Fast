@@ -193,8 +193,8 @@ Graph::Fast - graph data structures and algorithms, just faster.
 
 =head1 DESCRIPTION
 
-This module is for mathematical abstract data structures, called graphs,
-that model relations between objects with vertices and edges.
+Graph::Fast implements a mathematical abstract data structure, called graph,
+that models relations between objects with vertices and edges.
 
 =head2 Graph::Fast vs Graph
 
