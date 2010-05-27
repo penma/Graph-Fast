@@ -20,6 +20,17 @@ sub add_edge {
 
 1;
 
+package Graph::Fast_LPQ::GraphPM;
+
+use base 'Graph::Fast::GraphPM';
+
+use List::PriorityQueue;
+
+sub new { Graph::Fast::GraphPM->new(queue_maker => sub { List::PriorityQueue->new() }); }
+
+1;
+
+
 __END__
 
 =head1 NAME
