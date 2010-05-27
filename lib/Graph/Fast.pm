@@ -181,3 +181,104 @@ sub deledge {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Graph::Fast - graph data structures and algorithms, just faster.
+
+=head1 SYNOPSIS
+
+ # todo
+
+=head1 DESCRIPTION
+
+This module is for mathematical abstract data structures, called graphs,
+that model relations between objects with vertices and edges.
+
+=head2 Graph::Fast vs Graph
+
+While L<Graph> is a module with a lot of features, it is not really fast.
+Graph::Fast doesn't implement all the features, but it is much faster.
+Graph::Fast is for you if you need the most important things done very
+fast.
+
+=head1 FUNCTIONS
+
+Available functions are:
+
+=head2 B<new>(I<optional options...>)
+
+Constructs a new Graph::Fast object.
+
+The constructor takes optional parameters as a hash. Currently there are
+no options.
+
+=head2 B<countedges>()
+
+Returns the number of edges in the graph.
+
+=head2 B<countvertices>()
+
+Returns the number of vertices in the graph.
+
+=head2 B<addvertex>(I<$name>)
+
+Adds a vertex with the specified name to the graph. Names must be unique.
+It is safe to call this with a name that already exists in the graph.
+
+=head2 B<addedge>(I<$from> => I<$to>, I<$weight>, I<$userdata>)
+
+Adds a directed edge to the graph, pointing from vertex named I<$from> to
+I<$to>. The edge has a weight of I<$weight>. Application-specific data
+can be added to the edge.
+
+=head2 B<deledge>(I<$from> => I<$to>)
+
+Removes an edge that points from named vertex I<$from> to I<$to> from the
+graph.
+
+It is safe to call this for edges that do not exist.
+
+=head2 B<dijkstra>(I<$from> => I<$to>)
+
+Invokes Dijkstra's algorithm on the graph to find the shortest path from
+source vertex I<$from> to destination vertex I<$to>.
+
+If a path is found, it is returned as a list. If no path is found, the
+empty list is returned.
+
+=head1 LIMITATIONS
+
+Many features are missing. This includes basic features.
+
+Vertices currently cannot be deleted once added to the graph.
+
+It is unclear how to deal with multiedges (two different edges that connect
+the same pair of vertices). The behaviour will likely change in the future.
+Currently edges can and will exist only once.
+
+It is unclear if the internal representation should be partially exposed
+as a well-defined interface or if vertices and edges should be treated as
+opaque and only accessed using functions instead.
+
+As a result of that, the return values of several functions are not
+well-defined.
+
+=head1 BUGS
+
+Maybe.
+
+=head1 SEE ALSO
+
+L<Graph> - slower, but a lot more features
+
+L<Boost::Graph> - written in C++, might be even faster
+
+=head1 AUTHORS & COPYRIGHTS
+
+Made 2010 by Lars Stoltenow.
+This is free software; you may redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut
