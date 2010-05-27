@@ -29,6 +29,6 @@ $g->deledge("A", "B");
 is($g->countedges(),    1, "one edge in graph");
 is($g->countvertices(), 2, "two vertices in graph");
 # for lack of a better interface, we peek into fastgraph's guts.
-is($g->{edges}->[0]->[0], "B", "remaining edge's source vertex is B");
-is($g->{edges}->[0]->[1], "A", "remaining edge's destination vertex is A");
-is($g->{edges}->[0]->[2],  3 , "remaining edge's weight is 3");
+is($g->{edges}->[0]->{from}  , "B", "remaining edge's source vertex is B");
+is($g->{edges}->[0]->{to}    , "A", "remaining edge's destination vertex is A");
+is($g->{edges}->[0]->{weight},  3 , "remaining edge's weight is 3");

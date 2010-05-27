@@ -10,11 +10,6 @@ use Data::Dumper;
 use Storable qw(dclone);
 use List::Util qw(min);
 
-use constant {
-	EDGE_FROM => 0, EDGE_TO => 1, EDGE_WEIGHT => 2,
-	VERT_NAME => 0, VERT_EDGES_OUT => 1, VERT_EDGES_IN => 2,
-};
-
 use Hash::PriorityQueue;
 
 sub new {
@@ -41,7 +36,7 @@ sub addvertex {
 	my ($self, $name) = @_;
 
 	if (!exists($self->{vertices}->{$name})) {
-		$self->{vertices}->{$name} = [ $name, [], [] ];
+		$self->{vertices}->{$name} = { name => $name, edges_in => [], edges_out => [] };
 	}
 	return $self->{vertices}->{$name};
 }
@@ -60,12 +55,12 @@ sub dijkstra_worker {
 		my $current = $suboptimal->pop() // last;
 
 		# update all neighbors
-		foreach my $edge (@{$vert->{$current}->[VERT_EDGES_OUT]}) {
-			if (($self->{d_dist}->{$edge->[EDGE_TO]} == -1) ||
-			($self->{d_dist}->{$edge->[EDGE_TO]} > ($self->{d_dist}->{$current} + $edge->[EDGE_WEIGHT]) )) {
+		foreach my $edge (@{$vert->{$current}->{edges_out}}) {
+			if (($self->{d_dist}->{$edge->{to}} == -1) ||
+			($self->{d_dist}->{$edge->{to}} > ($self->{d_dist}->{$current} + $edge->{weight}) )) {
 				$suboptimal->update(
-					$edge->[EDGE_TO],
-					$self->{d_dist}->{$edge->[EDGE_TO]} = $self->{d_dist}->{$current} + $edge->[EDGE_WEIGHT]
+					$edge->{to},
+					$self->{d_dist}->{$edge->{to}} = $self->{d_dist}->{$current} + $edge->{weight}
 				);
 			}
 		}
@@ -75,9 +70,9 @@ sub dijkstra_worker {
 	my @path = ();
 	my $current = $to;
 	NODE: while ($current ne $from) {
-		foreach my $edge (@{$vert->{$current}->[VERT_EDGES_IN]}) {
-			if ($self->{d_dist}->{$current} == $self->{d_dist}->{$edge->[EDGE_FROM]} + $edge->[EDGE_WEIGHT]) {
-				$current = $edge->[EDGE_FROM];
+		foreach my $edge (@{$vert->{$current}->{edges_in}}) {
+			if ($self->{d_dist}->{$current} == $self->{d_dist}->{$edge->{from}} + $edge->{weight}) {
+				$current = $edge->{from};
 				unshift(@path, $edge);
 				next NODE;
 			}
@@ -129,8 +124,8 @@ sub recursive_dijkstra {
 			# from copies of the graph, remove one edge from the result path,
 			# and continue finding paths on that tree.
 			my $g2 = dclone($self);
-			$g2->deledge($d[0]->[$_]->[0], $d[0]->[$_]->[1]);
-			my @new = $g2->recursive_dijkstra($from, $to, $level - 1, $d[0]->[$_]->[1]);
+			$g2->deledge($d[0]->[$_]->{from}, $d[0]->[$_]->{to});
+			my @new = $g2->recursive_dijkstra($from, $to, $level - 1, $d[0]->[$_]->{to});
 
 			# add all new paths, unless they are already present in the result set
 			foreach my $n (@new) {
@@ -150,11 +145,11 @@ sub addedge {
 	my $v_from = $v->{$_[0]} // $g->addvertex($_[0]);
 	my $v_to   = $v->{$_[1]} // $g->addvertex($_[1]);
 
-	my $edge = [ @_ ];
+	my $edge = { from => $_[0], to => $_[1], weight => $_[2] };
 
 	push(@{$g->{edges}}, $edge);
-	push(@{$v_from->[VERT_EDGES_OUT]}, $edge);
-	push(@{$v_to->[VERT_EDGES_IN]}, $edge);
+	push(@{$v_from->{edges_out}}, $edge);
+	push(@{$v_to->{edges_in}}, $edge);
 }
 
 sub deledge {
@@ -166,14 +161,14 @@ sub deledge {
 	# find the edge. assume it only exists once -> only delete the first.
 	# while we're at it, delete the edge from the source vertex...
 	my $e;
-	@{$v_from->[VERT_EDGES_OUT]} = grep { $_->[EDGE_TO] ne $_[2] or ($e = $_, 0) } @{$v_from->[VERT_EDGES_OUT]};
+	@{$v_from->{edges_out}} = grep { $_->{to} ne $_[2] or ($e = $_, 0) } @{$v_from->{edges_out}};
 	return undef if (!defined($e));
 
 	# now search it in the destination vertex' list, delete it there
 	# also only delete the first matching one here (though now there
 	# shouldn't be any duplicates at all because now we're matching the
 	# actual edge, not just its endpoints like above.
-	@{$v_to->[VERT_EDGES_IN]} = grep { $_ != $e } @{$v_to->[VERT_EDGES_IN]};
+	@{$v_to->{edges_in}} = grep { $_ != $e } @{$v_to->{edges_in}};
 
 	# and remove it from the graph's vertex list
 	@{$_[0]->{edges}} = grep { $_ != $e } @{$_[0]->{edges}}
