@@ -36,7 +36,7 @@ sub addvertex {
 	my ($self, $name) = @_;
 
 	if (!exists($self->{vertices}->{$name})) {
-		$self->{vertices}->{$name} = { name => $name, edges_in => [], edges_out => [] };
+		$self->{vertices}->{$name} = { name => $name, edges_in => {}, edges_out => {} };
 	}
 	return $self->{vertices}->{$name};
 }
@@ -55,7 +55,7 @@ sub dijkstra_worker {
 		my $current = $suboptimal->pop() // last;
 
 		# update all neighbors
-		foreach my $edge (@{$vert->{$current}->{edges_out}}) {
+		foreach my $edge (values %{$vert->{$current}->{edges_out}}) {
 			if (($self->{d_dist}->{$edge->{to}} == -1) ||
 			($self->{d_dist}->{$edge->{to}} > ($self->{d_dist}->{$current} + $edge->{weight}) )) {
 				$suboptimal->update(
@@ -70,7 +70,7 @@ sub dijkstra_worker {
 	my @path = ();
 	my $current = $to;
 	NODE: while ($current ne $from) {
-		foreach my $edge (@{$vert->{$current}->{edges_in}}) {
+		foreach my $edge (values %{$vert->{$current}->{edges_in}}) {
 			if ($self->{d_dist}->{$current} == $self->{d_dist}->{$edge->{from}} + $edge->{weight}) {
 				$current = $edge->{from};
 				unshift(@path, $edge);
@@ -148,8 +148,8 @@ sub addedge {
 	my $edge = { from => $_[0], to => $_[1], weight => $_[2] };
 
 	push(@{$g->{edges}}, $edge);
-	push(@{$v_from->{edges_out}}, $edge);
-	push(@{$v_to->{edges_in}}, $edge);
+	$v_from->{edges_out}->{$_[1]} = $edge;
+	$v_to->{edges_in}->{$_[0]}  = $edge;
 }
 
 sub deledge {
@@ -160,15 +160,15 @@ sub deledge {
 
 	# find the edge. assume it only exists once -> only delete the first.
 	# while we're at it, delete the edge from the source vertex...
-	my $e;
-	@{$v_from->{edges_out}} = grep { $_->{to} ne $_[2] or ($e = $_, 0) } @{$v_from->{edges_out}};
+	my $e = $v_from->{edges_out}->{$_[2]};
 	return undef if (!defined($e));
+	delete($v_from->{edges_out}->{$_[2]});
 
 	# now search it in the destination vertex' list, delete it there
 	# also only delete the first matching one here (though now there
 	# shouldn't be any duplicates at all because now we're matching the
 	# actual edge, not just its endpoints like above.
-	@{$v_to->{edges_in}} = grep { $_ != $e } @{$v_to->{edges_in}};
+	delete($v_to->{edges_in}->{$_[1]});
 
 	# and remove it from the graph's vertex list
 	@{$_[0]->{edges}} = grep { $_ != $e } @{$_[0]->{edges}}
