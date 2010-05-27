@@ -123,7 +123,11 @@ sub recursive_dijkstra {
 		foreach (0..(@{$d[0]}-1)) {
 			# from copies of the graph, remove one edge from the result path,
 			# and continue finding paths on that tree.
+			my $ffffuuuu = $self->{_queue_maker};
+			$self->{_queue_maker} = "omg";
 			my $g2 = dclone($self);
+			$g2->{_queue_maker} = $self->{_queue_maker} = $ffffuuuu;
+
 			$g2->del_edge($d[0]->[$_]->{from}, $d[0]->[$_]->{to});
 			my @new = $g2->recursive_dijkstra($from, $to, $level - 1, $d[0]->[$_]->{to});
 
