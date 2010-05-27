@@ -245,7 +245,7 @@ It is safe to call this for edges that do not exist.
 Invokes Dijkstra's algorithm on the graph to find the shortest path from
 source vertex I<$from> to destination vertex I<$to>.
 
-If a path is found, it is returned as a list. If no path is found, the
+If a path is found, it is returned as a list. If no path is found, an
 empty list is returned.
 
 =head1 LIMITATIONS
