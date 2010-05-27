@@ -84,7 +84,7 @@ sub dijkstra_worker {
 		}
 		# getting here means we found no predecessor - there is none.
 		# so there's no path.
-		return undef;
+		return ();
 	}
 
 	return @path;

@@ -29,17 +29,17 @@ is_deeply([$g->dijkstra("A", "B")], [["A", "E", 2], ["E", "B", 2]], "new shortes
 
 # how about we go find a way between two nodes that are unreachable, due
 # to directionality?
-ok(!defined($g->dijkstra("B", "A")), "returns undef when there is no path");
+is_deeply([$g->dijkstra("B", "A")], [], "returns empty list when there is no path");
 
 # and between nodes that don't exist?
-ok(!defined($g->dijkstra("B", "X")), "returns undef for unknown nodes pt. 1");
-ok(!defined($g->dijkstra("X", "B")), "returns undef for unknown nodes pt. 2");
+is_deeply([$g->dijkstra("B", "X")], [], "returns empty list for unknown nodes pt. 1");
+is_deeply([$g->dijkstra("X", "B")], [], "returns empty list for unknown nodes pt. 2");
 
 # test usage of a different queue module - here: dummy module that returns nothing
 # and will therefore cause failure to find a path
 { package NullQueue; sub insert { } sub update { } sub pop { undef; } sub delete { } }
 $g->{_queue_maker} = sub { bless({}, "NullQueue"); };
-ok(!defined($g->dijkstra("A", "B")), "can use different queue module");
+is_deeply([$g->dijkstra("A", "B")], [], "can use different queue module");
 
 # here: actual module, should return same result now.
 SKIP: {
