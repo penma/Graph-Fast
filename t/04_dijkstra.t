@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 use Graph::Fast;
 
@@ -34,3 +34,18 @@ ok(!defined($g->dijkstra("B", "A")), "returns undef when there is no path");
 # and between nodes that don't exist?
 ok(!defined($g->dijkstra("B", "X")), "returns undef for unknown nodes pt. 1");
 ok(!defined($g->dijkstra("X", "B")), "returns undef for unknown nodes pt. 2");
+
+# test usage of a different queue module - here: dummy module that returns nothing
+# and will therefore cause failure to find a path
+{ package NullQueue; sub insert { } sub update { } sub pop { undef; } sub delete { } }
+$g->{_queue_maker} = sub { bless({}, "NullQueue"); };
+ok(!defined($g->dijkstra("A", "B")), "can use different queue module");
+
+# here: actual module, should return same result now.
+SKIP: {
+	eval { require List::PriorityQueue };
+	skip("List::PriorityQueue not installed, can't test with different queue module", 1) if ($@);
+
+	$g->{_queue_maker} = sub { List::PriorityQueue->new() };
+	is_deeply([$g->dijkstra("A", "B")], [["A", "E", 2], ["E", "B", 2]], "different queue module works");
+}
