@@ -41,6 +41,21 @@ sub add_vertex {
 	return $self->{vertices}->{$name};
 }
 
+sub del_vertex {
+	my ($self, $name) = @_;
+
+	if (exists($self->{vertices}->{$name})) {
+		@{$self->{edges}} = grep { $_->{from} ne $name and $_->{to} ne $name } @{$self->{edges}};
+		foreach my $in_edge (@{$self->{vertex}->{edges_in}}) {
+			delete($in_edge->{from}->{edges_out}->{$name});
+		}
+		foreach my $out_edge (@{$self->{vertex}->{edges_out}}) {
+			delete($out_edge->{to}->{edges_in}->{$name});
+		}
+		delete($self->{vertices}->{$name});
+	}
+}
+
 sub dijkstra_worker {
 	my ($self, $from, $to) = @_;
 
