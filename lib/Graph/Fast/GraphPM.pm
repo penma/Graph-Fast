@@ -24,9 +24,17 @@ package Graph::Fast_LPQ::GraphPM;
 
 use base 'Graph::Fast::GraphPM';
 
-use List::PriorityQueue;
+sub has_lpq { Graph::Fast::GraphPM->new(queue_maker => sub { List::PriorityQueue->new() }); }
 
-sub new { Graph::Fast::GraphPM->new(queue_maker => sub { List::PriorityQueue->new() }); }
+sub no_lpq { print STDERR "Creating Graph::Fast_LPQ::GraphPM with Hash::PriorityQueue because List::PriorityQueue isn't installed.\n";
+	Graph::Fast::GraphPM->new(); }
+
+eval { require List::PriorityQueue };
+if ($@) {
+	*new = \&no_lpq;
+} else {
+	*new = \&has_lpq;
+}
 
 1;
 

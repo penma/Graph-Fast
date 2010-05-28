@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.010;
 
-our $VERSION = "0.01";
+our $VERSION = "0.011";
 
 use Data::Dumper;
 use Storable qw(dclone);

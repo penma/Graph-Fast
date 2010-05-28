@@ -6,8 +6,6 @@ use lib 'lib';
 
 use Benchmark qw(:all);
 
-use List::PriorityQueue;
-
 use Graph::Directed;
 use Graph::Fast::GraphPM;
 use BoostGraphWrapper;
