@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 29;
+use Test::More tests => 34;
 
 use Graph::Fast;
 
@@ -68,4 +68,15 @@ is((keys(%{$g->{vertices}->{A}->{edges_in}}))[0], "B", "A's only incoming edge c
 is(scalar keys %{$g->{vertices}->{B}->{edges_in }}, 0, "No incoming edges as seen by B");
 is(scalar keys %{$g->{vertices}->{B}->{edges_out}}, 1, "One outgoing edge as seen by B");
 is((keys(%{$g->{vertices}->{B}->{edges_out}}))[0], "A", "B's only outgoing edge goes to A");
+
+# delete one vertex, the other one should remain (but disconnected)
+$g->del_vertex("A");
+
+is($g->count_vertices(), 1, "Only one vertex left in graph");
+is($g->count_edges(),    0, "No edges left in graph");
+
+is((keys(%{$g->{vertices}}))[0], "B", "Remaining vertex is B");
+
+is(scalar keys %{$g->{vertices}->{B}->{edges_in }}, 0, "No incoming edges as seen by B");
+is(scalar keys %{$g->{vertices}->{B}->{edges_out}}, 0, "No outgoing edges as seen by B");
 
