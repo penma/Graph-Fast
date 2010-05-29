@@ -46,11 +46,11 @@ sub del_vertex {
 
 	if (exists($self->{vertices}->{$name})) {
 		@{$self->{edges}} = grep { $_->{from} ne $name and $_->{to} ne $name } @{$self->{edges}};
-		foreach my $in_edge (@{$self->{vertex}->{edges_in}}) {
-			delete($in_edge->{from}->{edges_out}->{$name});
+		foreach my $in_edge (keys %{$self->{vertices}->{$name}->{edges_in}}) {
+			delete($self->{vertices}->{$in_edge}->{edges_out}->{$name});
 		}
-		foreach my $out_edge (@{$self->{vertex}->{edges_out}}) {
-			delete($out_edge->{to}->{edges_in}->{$name});
+		foreach my $out_edge (keys %{$self->{vertices}->{$name}->{edges_out}}) {
+			delete($self->{vertices}->{$out_edge}->{edges_in}->{$name});
 		}
 		delete($self->{vertices}->{$name});
 	}
