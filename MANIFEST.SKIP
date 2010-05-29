@@ -2,3 +2,4 @@
 ^Build$
 ^blib
 ^\.git
+^MYMETA.yml$
