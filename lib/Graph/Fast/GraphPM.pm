@@ -9,7 +9,7 @@ sub noop { 1; }
 *add_weighted_edge = \&Graph::Fast::add_edge;
 
 sub add_edge {
-	Graph::Fast::add_edge($_[0]. $_[1], $_[2], 1);
+	Graph::Fast::add_edge($_[0], $_[1], $_[2], 1);
 }
 
 *SP_Dijkstra = \&Graph::Fast::dijkstra;

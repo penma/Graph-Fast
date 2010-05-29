@@ -9,9 +9,19 @@ sub new {
 	return bless [$g], $_[0];
 }
 
+sub add_vertex {
+	# my ($self, $name) = @_;
+	$_[0]->[0]->add_node($_[1]);
+}
+
 sub add_weighted_edge {
 	# my ($self, $from, $to, $weight) = @_;
 	$_[0]->[0]->add_edge(node1 => $_[1], node2 => $_[2], weight => $_[3]);
+}
+
+sub add_edge {
+	# my ($self, $from, $to) = @_;
+	$_[0]->[0]->add_edge(node1 => $_[1], node2 => $_[2], weight => 1);
 }
 
 sub vertices {
